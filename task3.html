@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="weatherApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-time Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .weather-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .weather-card:last-child {
+            border-bottom: none;
+        }
+
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .weather-details {
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
+        .weather-details h2 {
+            margin: 0 0 5px;
+            color: #333;
+        }
+
+        .weather-details p {
+            margin: 0;
+            color: #777;
+        }
+
+        .weather-temperature {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .weather-description {
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" ng-controller="WeatherController as weatherCtrl">
+        <h1>Real-time Weather App</h1>
+        <div class="weather-card" ng-repeat="weather in weatherCtrl.weatherData">
+            <img class="weather-icon" ng-src="{{ weather.iconUrl }}" alt="{{ weather.description }}">
+            <div class="weather-details">
+                <h2>{{ weather.city }}</h2>
+                <p class="weather-temperature">{{ weather.temperature }}&deg;C</p>
+                <p class="weather-description">{{ weather.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        angular.module('weatherApp', [])
+        .controller('WeatherController', ['$http', function($http) {
+            var vm = this;
+            vm.weatherData = [];
+
+            // Replace 'YOUR_API_KEY' with your actual API key
+            var apiKey = 'YOUR_API_KEY';
+            var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=London&appid=' + apiKey;
+
+            $http.get(apiUrl)
+                .then(function(response) {
+                    vm.weatherData.push({
+                        city: response.data.name,
+                        temperature: Math.round(response.data.main.temp - 273.15),
+                        description: response.data.weather[0].description,
+                        iconUrl: 'http://openweathermap.org/img/wn/' + response.data.weather[0].icon + '.png'
+                    });
+                })
+                .catch(function(error) {
+                    console.error('Error fetching weather data:', error);
+                });
+        }]);
+    </script>
+</body>
+</html>
