@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app="productCatalogApp">
+<head>
+  <title>Product Catalog</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    .filters {
+      float: left;
+      width: 25%;
+    }
+
+    .products {
+      float: right;
+      width: 70%;
+    }
+
+    .product {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+
+    .product h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div ng-controller="CatalogController as catalog">
+    <h1>Product Catalog</h1>
+    <div class="filters">
+      <h2>Filters</h2>
+      <select ng-model="catalog.selectedCategory" ng-options="category.name for category in catalog.categories">
+        <option value="">All Categories</option>
+      </select>
+      <div ng-repeat="feature in catalog.features">
+        <label>
+          <input type="checkbox" ng-model="feature.selected"> {{ feature.name }}
+        </label>
+      </div>
+    </div>
+    <div class="products">
+      <h2>Products</h2>
+      <div class="product" ng-repeat="product in catalog.filteredProducts">
+        <h3>{{ product.name }}</h3>
+        <p>Category: {{ product.category }}</p>
+        <p>Price: {{ product.price }}</p>
+        <ul>
+          <li ng-repeat="feature in product.features" ng-show="catalog.featureFilter(feature)">{{ feature }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    angular.module('productCatalogApp', [])
+    .controller('CatalogController', function() {
+      var vm = this;
+
+      vm.categories = [
+        { name: 'Electronics' },
+        { name: 'Clothing' },
+        { name: 'Books' }
+      ];
+
+      vm.features = [
+        { name: 'Color', selected: false },
+        { name: 'Size', selected: false },
+        { name: 'Brand', selected: false }
+      ];
+
+      vm.products = [
+        { name: 'Laptop', category: 'Electronics', price: 1000, features: ['Color: Silver', 'Brand: Dell'] },
+        { name: 'T-shirt', category: 'Clothing', price: 20, features: ['Color: Red', 'Size: Medium'] },
+        { name: 'Book', category: 'Books', price: 15, features: ['Author: John Doe', 'Genre: Fiction'] }
+      ];
+
+      vm.selectedCategory = '';
+      vm.filteredProducts = [];
+
+      vm.featureFilter = function(feature) {
+        return !feature.selected || vm.filteredProducts.some(product => product.features.includes(feature.name));
+      };
+
+      vm.filterProducts = function() {
+        vm.filteredProducts = vm.products.filter(function(product) {
+          var categoryMatch = !vm.selectedCategory || product.category === vm.selectedCategory.name;
+          var featureMatch = vm.features.every(function(feature) {
+            return !feature.selected || product.features.includes(feature.name);
+          });
+          return categoryMatch && featureMatch;
+        });
+      };
+
+      vm.filterProducts();
+    });
+  </script>
+</body>
+</html>
