@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html ng-app="chatApp">
+<head>
+  <title>Real-Time Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .chat-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      overflow-y: scroll;
+      height: 300px;
+    }
+
+    .message {
+      background-color: #f0f0f0;
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+
+    .sender {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div ng-controller="ChatController as chat">
+    <h1>Real-Time Chat</h1>
+    <div class="chat-container">
+      <div class="message" ng-repeat="message in chat.messages">
+        <span class="sender">{{ message.sender }}:</span> {{ message.text }}
+      </div>
+    </div>
+    <form ng-submit="chat.sendMessage()">
+      <input type="text" ng-model="chat.newMessage" placeholder="Type your message...">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    angular.module('chatApp', [])
+    .controller('ChatController', function($scope, $timeout) {
+      var vm = this;
+
+      vm.messages = [
+        { sender: 'John', text: 'Hello!' },
+        { sender: 'Alice', text: 'Hi there!' }
+      ];
+
+      vm.newMessage = '';
+
+      vm.sendMessage = function() {
+        if (vm.newMessage.trim() !== '') {
+          vm.messages.push({ sender: 'You', text: vm.newMessage });
+          vm.newMessage = '';
+        }
+      };
+
+      // Simulate receiving messages from another user after a delay
+      $timeout(function() {
+        vm.messages.push({ sender: 'Alice', text: 'How are you?' });
+      }, 2000);
+
+      $timeout(function() {
+        vm.messages.push({ sender: 'John', text: 'I\'m good, thanks!' });
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
