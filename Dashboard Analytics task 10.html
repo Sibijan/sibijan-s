@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html ng-app="dashboardApp">
+<head>
+  <title>Dashboard Analytics</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .dashboard-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .chart {
+      width: 30%;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div ng-controller="DashboardController as dashboard">
+    <h1>Dashboard Analytics</h1>
+    <div class="dashboard-container">
+      <div class="chart">
+        <h2>Revenue</h2>
+        <canvas id="revenueChart" width="400" height="200"></canvas>
+      </div>
+      <div class="chart">
+        <h2>Users</h2>
+        <canvas id="usersChart" width="400" height="200"></canvas>
+      </div>
+      <div class="chart">
+        <h2>Page Views</h2>
+        <canvas id="pageViewsChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+  <script>
+    angular.module('dashboardApp', [])
+    .controller('DashboardController', function() {
+      var dashboard = this;
+
+      // Sample data for charts
+      dashboard.revenueData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+          label: 'Revenue',
+          data: [2000, 2200, 2500, 2800, 3000, 3200, 3500],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      dashboard.usersData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+          label: 'Users',
+          data: [100, 120, 150, 180, 200, 220, 250],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      dashboard.pageViewsData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+          label: 'Page Views',
+          data: [5000, 5500, 6000, 6500, 7000, 7500, 8000],
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      // Initialize charts
+      var revenueCtx = document.getElementById('revenueChart').getContext('2d');
+      new Chart(revenueCtx, {
+        type: 'line',
+        data: dashboard.revenueData,
+        options: {
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+
+      var usersCtx = document.getElementById('usersChart').getContext('2d');
+      new Chart(usersCtx, {
+        type: 'line',
+        data: dashboard.usersData,
+        options: {
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+
+      var pageViewsCtx = document.getElementById('pageViewsChart').getContext('2d');
+      new Chart(pageViewsCtx, {
+        type: 'line',
+        data: dashboard.pageViewsData,
+        options: {
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
