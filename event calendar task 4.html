@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html ng-app="eventCalendarApp">
+<head>
+  <title>Event Calendar</title>
+  <style>
+    .calendar {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .week {
+      flex: 1 0 14%;
+      margin: 0.5%;
+    }
+
+    .day {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .date {
+      font-weight: bold;
+    }
+
+    .events {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div ng-controller="CalendarController as calendar">
+    <h1>Event Calendar</h1>
+    <div class="calendar">
+      <div class="week">
+        <div class="day" ng-repeat="day in calendar.days">
+          <span class="date">{{ day.date }}</span>
+          <ul class="events">
+            <li ng-repeat="event in day.events">{{ event }}</li>
+          </ul>
+          <button ng-click="calendar.addEvent(day)">Add Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    angular.module('eventCalendarApp', [])
+    .controller('CalendarController', function() {
+      var vm = this;
+      var date = new Date();
+      var month = date.getMonth();
+      var year = date.getFullYear();
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+      vm.days = [];
+
+      for (var i = 1; i <= daysInMonth; i++) {
+        var currentDate = new Date(year, month, i);
+        var day = {
+          date: currentDate.toDateString(),
+          events: []
+        };
+        vm.days.push(day);
+      }
+
+      vm.addEvent = function(day) {
+        var event = prompt('Enter event:');
+        if (event) {
+          day.events.push(event);
+        }
+      };
+    });
+  </script>
+</body>
+</html>
