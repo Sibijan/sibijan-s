@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html ng-app="quizApp">
+<head>
+  <title>Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    .quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      cursor: pointer;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    li:hover {
+      background-color: #f0f0f0;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div ng-controller="QuizController as quiz">
+    <h1>Quiz App</h1>
+    <div class="quiz-container" ng-show="quiz.questions.length > 0">
+      <div ng-if="!quiz.showResults">
+        <h2>{{ quiz.currentQuestion.question }}</h2>
+        <ul>
+          <li ng-repeat="option in quiz.currentQuestion.options" ng-click="quiz.selectOption(option)">
+            {{ option }}
+          </li>
+        </ul>
+        <button ng-click="quiz.nextQuestion()" ng-show="quiz.currentIndex < quiz.questions.length - 1">Next</button>
+        <button ng-click="quiz.showResults = true" ng-show="quiz.currentIndex === quiz.questions.length - 1">Finish</button>
+      </div>
+      <div ng-if="quiz.showResults">
+        <h2>Results</h2>
+        <p>You got {{ quiz.score }} out of {{ quiz.questions.length }} correct!</p>
+      </div>
+    </div>
+    <div class="loading" ng-show="quiz.loading">Loading...</div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    angular.module('quizApp', [])
+    .controller('QuizController', function($scope, $timeout) {
+      var vm = this;
+
+      vm.questions = [];
+      vm.currentIndex = 0;
+      vm.currentQuestion = {};
+      vm.score = 0;
+      vm.showResults = false;
+      vm.loading = true;
+
+      // Simulated data - replace with your own API call to load questions
+      $timeout(function() {
+        vm.questions = [
+          {
+            question: 'What is the capital of France?',
+            options: ['Paris', 'London', 'Berlin'],
+            correctAnswer: 'Paris'
+          },
+          {
+            question: 'What is 2 + 2?',
+            options: ['3', '4', '5'],
+            correctAnswer: '4'
+          },
+          {
+            question: 'Who wrote "Romeo and Juliet"?',
+            options: ['William Shakespeare', 'Charles Dickens', 'Jane Austen'],
+            correctAnswer: 'William Shakespeare'
+          }
+        ];
+        vm.currentQuestion = vm.questions[vm.currentIndex];
+        vm.loading = false;
+      }, 1000);
+
+      vm.selectOption = function(option) {
+        if (option === vm.currentQuestion.correctAnswer) {
+          vm.score++;
+        }
+      };
+
+      vm.nextQuestion = function() {
+        vm.currentIndex++;
+        vm.currentQuestion = vm.questions[vm.currentIndex];
+      };
+    });
+  </script>
+</body>
+</html>
